@@ -1,0 +1,4 @@
+pin note 
+mode darklight 
+sort by importance, datetime 
+search notes 
