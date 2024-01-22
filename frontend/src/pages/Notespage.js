@@ -1,31 +1,26 @@
 import React from "react";
-import Modal from "../components/NoteWriter/Modal";
+import NoteWindow from "../components/NoteWriter/Modal";
 import {
-  Button,
   HStack,
   Heading,
-  IconButton,
-  InputGroup,
-  InputLeftAddon,
-  InputRightElement,
-  Select,
   useDisclosure,
 } from "@chakra-ui/react";
-import { BsFileEarmarkArrowDown, BsFillPinFill } from "react-icons/bs";
-import { BsPalette } from "react-icons/bs";
-import TextEditor from "../components/NoteWriter/TextEditor";
 import MultipleCards from "../components/notes/MultipleCards";
 import SortingIconButton from "../components/header/SortingIconButton";
 import Searchbar from "../components/header/Searchbar";
 import DarkModeSwitch from "../components/header/DarkModeSwitch";
 import CreateNote from "../components/header/CreateNote";
-import Pin from "../components/NoteWriter/Pin";
-import ColorPicker from "../components/NoteWriter/ColorPicker";
+import { ModalProvider } from '../context/ModalContext.mjs'
+import { SortingProvider } from '../context/SortingContext.mjs';
+import { SearchProvider } from '../context/SearchContext.mjs'
 
 const Notespage = () => {
-  
+  const { isOpen, onClose } = useDisclosure();
   return (
     <>
+    <SearchProvider>
+    <SortingProvider>
+    <ModalProvider>
       <HStack>
         <Heading>NotesApp</Heading>
         <DarkModeSwitch/>
@@ -33,9 +28,12 @@ const Notespage = () => {
         <SortingIconButton />
         <Searchbar />
       </HStack>
-      <Modal />
+      <NoteWindow isOpen={isOpen} onClose={onClose} />
       <MultipleCards />
-    </>
+      </ModalProvider>
+      </SortingProvider>
+      </SearchProvider>
+      </>
   );
 };
 

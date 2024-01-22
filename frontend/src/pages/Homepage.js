@@ -1,7 +1,7 @@
 import { Box, Container, Flex, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import React from "react";
-import Login from "../components/Login";
-import Signup from "../components/Signup";
+import Login from "../components/auth/Login";
+import Signup from "../components/auth/Signup";
 
 const Homepage = () => {
   return (

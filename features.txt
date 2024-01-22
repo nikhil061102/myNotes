@@ -1,4 +1,6 @@
-pin note 
-mode darklight 
-sort by importance, datetime 
-search notes 
+login signup 
+axios 
+cors error 
+webpage frontend organise karo 
+
+https://www.youtube.com/watch?v=eWGwQ1__73E&list=PL4cUxeGkcC9iqqESP8335DA5cRFp8loyp&index=12

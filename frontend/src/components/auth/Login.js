@@ -1,14 +1,25 @@
-import { Button, Input, InputGroup, InputLeftElement, InputRightElement, Stack } from "@chakra-ui/react";
-import { LockIcon } from "@chakra-ui/icons"; // Import the LockIcon component
 import React, { useState } from "react";
+import {
+  Button,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  Stack,
+} from "@chakra-ui/react";
+import { LockIcon } from "@chakra-ui/icons";
 
 const Login = () => {
-  const [show, setShow] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
-  const handleClick = () => {
-    setShow(!show);
+  const handleSubmit = () => {
+    // Your login logic here, you can use 'email' and 'password' state variables
+    console.log("Email:", email);
+    console.log("Password:", password);
   };
-
 
   return (
     <Stack>
@@ -16,27 +27,30 @@ const Login = () => {
         <InputLeftElement pointerEvents="none" color="gray.300" fontSize="1.2em">
           @
         </InputLeftElement>
-        <Input placeholder="Enter email" />
+        <Input
+          type="email"
+          placeholder="Enter email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
       </InputGroup>
       <InputGroup>
         <Input
-          type={show ? "text" : "password"}
+          type={showPassword ? "text" : "password"}
           placeholder="Enter password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
         <InputLeftElement pointerEvents="none" color="gray.300" fontSize="1.2em">
           <LockIcon />
         </InputLeftElement>
         <InputRightElement width="4.5rem">
-          <Button h="1.75rem" size="sm" onClick={handleClick}>
-            {show ? "Hide" : "Show"}
+          <Button h="1.75rem" size="sm" onClick={() => {setShowPassword(!showPassword)}}>
+            {showPassword ? "Hide" : "Show"}
           </Button>
         </InputRightElement>
       </InputGroup>
-      <Button
-        colorScheme="blue"
-        // onClick={submitHandler}
-        // isLoading={loading}
-      >
+      <Button colorScheme="blue" onClick={handleSubmit} isLoading={isLoading} loadingText='Submitting'>
         Login
       </Button>
     </Stack>

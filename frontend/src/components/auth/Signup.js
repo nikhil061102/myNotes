@@ -1,49 +1,144 @@
-import { Button, Input, InputGroup, InputLeftElement, InputRightElement, Stack } from "@chakra-ui/react";
-import { LockIcon } from "@chakra-ui/icons"; 
-import { BsPersonFill } from "react-icons/bs";
 import React, { useState } from "react";
+import {
+  Button,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  Stack
+} from "@chakra-ui/react";
+import { LockIcon } from "@chakra-ui/icons";
+import { BsPersonFill } from "react-icons/bs";
+import { useToast } from "@chakra-ui/react";
 
 const Signup = () => {
-  const [show, setShow] = useState(false);
+  const toast = useToast();
 
-  const handleClick = () => {
-    setShow(!show);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    setLoading(true);
+  
+    if (password !== confirmPassword) {
+      toast({
+        title: 'Error !',
+        description: "Password and confirm password must match !",
+        status: 'error',
+        position: 'top',
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      try {
+        const res = await fetch('/user/signup', { 
+          method: 'POST', 
+          body: JSON.stringify({ name, email, password }),
+          headers: {'Content-Type': 'application/json'}
+        });
+        // const data = await res.json();
+        // if (data.errors) {
+          // for (const el of data.errors) {
+          //   console.log(el.msg);
+          //   toast({
+          //     title: 'Error !',
+          //     description: el.msg,
+          //     status: 'error',
+          //     position: 'top',
+          //     duration: 3000,
+          //     isClosable: true,
+          //   });
+          // }
+        // }
+        // if (data.user) {
+        //   location.assign('/');
+        // }
+  
+      }
+      catch (err) {
+        // console.log(err);
+        // for (const el of err) {
+        //   console.log(el.msg)
+        //   toast({
+        //     title: 'Error !',
+        //     description: el.msg,
+        //     status: 'error',
+        //     position: 'top',
+        //     duration: 3000,
+        //     isClosable: true,
+        //   });
+        // }
+      }
+    }
+  
+    setLoading(false);
   };
 
   return (
+    
     <Stack>
       <InputGroup>
         <InputLeftElement pointerEvents="none" color="gray.300" fontSize="1.2em">
           <BsPersonFill />
         </InputLeftElement>
-        <Input placeholder="Enter name" />
+        <Input
+          type="text"
+          placeholder="Enter name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
       </InputGroup>
       <InputGroup>
         <InputLeftElement pointerEvents="none" color="gray.300" fontSize="1.2em">
           @
         </InputLeftElement>
-        <Input placeholder="Enter email" />
+        <Input
+          type="email"
+          placeholder="Enter email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
       </InputGroup>
       <InputGroup>
         <Input
           pr="4.5rem"
-          type={show ? "text" : "password"}
+          type={showPassword ? "text" : "password"}
           placeholder="Enter password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
         <InputLeftElement pointerEvents="none" color="gray.300" fontSize="1.2em">
           <LockIcon />
         </InputLeftElement>
         <InputRightElement width="4.5rem">
-          <Button h="1.75rem" size="sm" onClick={handleClick}>
-            {show ? "Hide" : "Show"}
+          <Button h="1.75rem" size="sm" onClick={() => {setShowPassword(!showPassword)}}>
+            {showPassword ? "Hide" : "Show"}
           </Button>
         </InputRightElement>
       </InputGroup>
-      <Button
-        colorScheme="blue"
-        // onClick={submitHandler}
-        // isLoading={loading}
-      >
+      <InputGroup>
+        <Input
+          pr="4.5rem"
+          type={showConfirmPassword ? "text" : "password"}
+          placeholder="Confirm password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
+        <InputLeftElement pointerEvents="none" color="gray.300" fontSize="1.2em">
+          <LockIcon />
+        </InputLeftElement>
+        <InputRightElement width="4.5rem">
+          <Button h="1.75rem" size="sm" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+            {showConfirmPassword ? "Hide" : "Show"}
+          </Button>
+        </InputRightElement>
+      </InputGroup>
+      <Button colorScheme="blue" onClick={handleSubmit} isLoading={isLoading} loadingText='Submitting'>
         Signup
       </Button>
     </Stack>

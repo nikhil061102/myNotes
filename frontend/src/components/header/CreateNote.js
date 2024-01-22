@@ -1,24 +1,22 @@
-import { Button, useDisclosure } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import React from "react";
 import { TfiPencilAlt } from "react-icons/tfi";
-// import NoteWindow from "../NoteWriter/Modal";
+import { useModal } from '../../context/ModalContext.mjs'
+
 
 const CreateNote = () => {
-  // const handleOpenModal = () => {
-  //   const { onOpen } = useDisclosure();
-  //   onOpen();
-  // };
+  const { openModal } = useModal();
+  
   return (
     <>
     <Button
       leftIcon={<TfiPencilAlt style={{ fontSize: "1.5em" }} />}
       colorScheme="blue"
       variant="outline"
-      // onClick={handleOpenModal}
+      onClick={openModal}
     >
       New Note
     </Button>
-    {/* <NoteWindow /> */}
     </>
   );
 };

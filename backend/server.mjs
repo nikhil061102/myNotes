@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser';
 
 const app = express();
-const port = 3000;
+const port = 5000;
 
 connectDB();
 dotenv.config();
