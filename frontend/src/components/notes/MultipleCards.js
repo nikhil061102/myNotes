@@ -13,6 +13,7 @@ import {
   HStack,
   ModalFooter,
   IconButton,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from 'react'
 import { BsFillTrash3Fill } from "react-icons/bs";
@@ -23,132 +24,76 @@ import { useSearchContext } from "../../context/SearchContext.mjs";
 import { convert } from 'html-to-text';
 
 const MultipleCards = () => {
+  const toast = useToast();
+
   const { openModal } = useModal();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedCard, setSelectedCard] = useState(null);
   const { selectedOption } = useSorting();
   const { searchTerm } = useSearchContext();
-
+  // const [loading, setLoading] = useState(false);
   const sortCardsData = (data, sortingOption) => {
     const urgencyOrder = { High: 1, Medium: 2, Low: 3 };
   
     data.sort((a, b) => {
       if (sortingOption === 'datetime') {
-        return b.datetime - a.datetime;
+        return new Date(b.timestamp) - new Date(a.timestamp);
       } else if (sortingOption === 'importance') {
         const urgencyComparison = urgencyOrder[a.urgency] - urgencyOrder[b.urgency];
   
         if (urgencyComparison !== 0) {
           return urgencyComparison;
         } else {
-          return b.datetime - a.datetime;
+          return new Date(b.timestamp) - new Date(a.timestamp);
         }
       }
+
+      return data;
     });
   
     return data;
   };
-
-  const cards = [
-    {
-      id: 123,
-      title: 'urckic',
-      urgency: 'Low',
-      category: 'pj4o1z',
-      content: '<p>z8j<u>jh</u><u style="color: rgb(194, 133, 255);">qaa</u><u style="background-color: rgb(255, 255, 102); color: rgb(194, 133, 255);">a</u><u style="background-color: rgb(255, 255, 102); color: rgb(194, 133, 255);" class="ql-size-large">a</u><strong style="background-color: rgb(255, 255, 102); color: rgb(194, 133, 255);" class="ql-size-large"><s><u>a</u></s></strong><strong style="background-color: rgb(255, 255, 102);" class="ql-size-large"><s><u>a</u>a</s></strong><strong class="ql-size-large"><s>aa</s>a</strong><strong>abuve<em>dcwia</em></strong><em>bcsibi</em>swbaib</p>',
-      isPinned: true,
-      backgroundColor: '#df0030',
-      datetime: 100
-    },
-    {
-      title: '43yjcl',
-      urgency: 'Medium',
-      category: '46fiyr',
-      content: '7vbdjq',
-      isPinned: false,
-      backgroundColor: '#aaf3b8',
-      datetime: 41
-    },
-    {
-      title: 'u9vx5',
-      urgency: 'High',
-      category: 'bqqho',
-      content: 'xx8osi',
-      isPinned: true,
-      backgroundColor: '#ac2eae',
-      datetime: 1
-    },
-    {
-      title: 'bxtpm9',
-      urgency: 'High',
-      category: 'rhbx3a',
-      content: 'i2vfa',
-      isPinned: false,
-      backgroundColor: '#79a9bc',
-      datetime: 11
-    },
-    {
-      title: 'w05umt',
-      urgency: 'High',
-      category: 'n9t7hw',
-      content: 'quxncl',
-      isPinned: false,
-      backgroundColor: '#1c7067',
-      datetime: 21
-    },
-    {
-      title: 'jcwl1q',
-      urgency: 'Low',
-      category: 'ygsf0d',
-      content: 'z8jjh',
-      isPinned: true,
-      backgroundColor: '#5f172d',
-      datetime: 500
-    },
-    {
-      title: '6i62rq',
-      urgency: 'Medium',
-      category: 'mbf3je',
-      content: 'yz8fl',
-      isPinned: false,
-      backgroundColor: '#183a3a',
-      datetime: 61
-    },
-    {
-      title: 'z0t606',
-      urgency: 'Medium',
-      category: 'lxxm',
-      content: '54z7n',
-      isPinned: true,
-      backgroundColor: '#c86c5c',
-      datetime: 85
-    },
-    {
-      title: '4jch6mo',
-      urgency: 'Low',
-      category: '63iap',
-      content: 'c091r',
-      isPinned: false,
-      backgroundColor: '#629837',
-      datetime: 10000
-    }
-  ];
-
-  const [cardsData, setCardsData] = useState(cards);
-  useEffect(() => {
-    setCardsData(
-      sortCardsData(
-        cards.filter((card) => {
-          const titleMatch = card.title.toLowerCase().includes(searchTerm.toLowerCase());
-          const categoryMatch = card.category.toLowerCase().includes(searchTerm.toLowerCase());
-          const contentMatch = convert(card.content,{wordwrap: false}).toLowerCase().includes(searchTerm.toLowerCase());
-          return titleMatch || categoryMatch || contentMatch;
-        }),
-        selectedOption
-      )
-    )
-  }, [searchTerm, selectedOption]);
+  const [cards, setCards] = useState([]); 
   
+  useEffect(() => {
+    const loadInit = async () => {
+      // setLoading(true);
+      try {
+        const res = await fetch("/notes/", {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+        const data = await res.json();
+        if (data.err) {
+          toast({
+            title: "Error !",
+            description: data.err,
+            status: "error",
+            position: "top",
+            duration: 3000,
+            isClosable: true,
+          });
+          return;
+        } else {
+          const filteredCards = data.notes.filter(card =>
+            card.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            convert(card.content, { wordwrap:null }).toLowerCase().includes(searchTerm.toLowerCase()) ||
+            card.category.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+
+          const updatedCards = sortCardsData(filteredCards, selectedOption);
+
+          setCards(updatedCards);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+      // setLoading(false);
+    };
+
+    loadInit();
+  }, [selectedOption, searchTerm, toast]);
+
   const handleCardClick = (card) => {
     setSelectedCard(card);
     onOpen();
@@ -172,25 +117,50 @@ const MultipleCards = () => {
     </Box>
   );
 
-  const handleDelete = (card) => {
-    console.log(card.id);
-    console.log("Delete button clicked");
+  const handleDelete = async (card) => {
+    try {
+      const response = await fetch(`/notes/${card._id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json"
+        },
+      });
+      if (!response.ok) {
+        toast({
+          title: "Error !",
+          description: "Failed to delete the note",
+          status: "error",
+          position: "top",
+          duration: 1000,
+          isClosable: true,
+        });
+      } else{
+        toast({
+          title: "Success !",
+          description: "Note deleted successfully",
+          status: "success",
+          position: "top",
+          duration: 1000,
+          isClosable: true,
+        });
+      }
+      onClose(); 
+      window.location.reload();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleEdit = async (card) => {
+    openModal(card);
     onClose();
   };
 
-  const handleEdit = (card) => {
-
-    console.log("Edit button clicked");
-    openModal(card);
-    console.log(card);
-  };
-
-  const pinnedCards = cardsData.filter((card) => card.isPinned);
-  const otherCards = cardsData.filter((card) => !card.isPinned);
-
+  const pinnedCards = cards.filter((card) => card.isPinned);
+  const otherCards = cards.filter((card) => !card.isPinned);
+  
   return (
     <>
-      {/* Pinned Cards Grid */}
       {pinnedCards.length > 0 && (
         <>
           {pinnedCards.length > 0 && <Heading fontSize="xl" mb={4}>Pinned</Heading>}
@@ -202,7 +172,6 @@ const MultipleCards = () => {
         </>
       )}
 
-      {/* Other Cards Grid */}
       {otherCards.length > 0 && (
         <>
         {pinnedCards.length > 0 && <Heading fontSize="xl" mb={4}>Others</Heading>}
@@ -213,28 +182,7 @@ const MultipleCards = () => {
         </Grid>
         </>
       )}
-{/* return (
-  <>
-    <Grid templateColumns="repeat(4, 1fr)" gap={2} p={2}>
-      {cardsData.map((card) => (
-        <Box
-          key={card.id}
-          maxW="xs"
-          borderWidth="1px"
-          borderRadius="lg"
-          overfLow="hidden"
-          p={2}
-          bg={card.backgroundColor}
-          cursor="pointer"
-          onClick={() => handleCardClick(card)}
-        >
-          <Heading fontSize="sm" mb={2}>
-            {card.title}
-          </Heading>
-          <Text fontSize="xs" noOfLines={4} dangerouslySetInnerHTML={{ __html: card.content }} />
-        </Box>
-      ))}
-    </Grid> */}
+
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent bg={selectedCard && selectedCard.backgroundColor}>

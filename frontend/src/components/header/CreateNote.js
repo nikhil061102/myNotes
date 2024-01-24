@@ -8,7 +8,6 @@ const CreateNote = () => {
   const { openModal } = useModal();
   
   return (
-    <>
     <Button
       leftIcon={<TfiPencilAlt style={{ fontSize: "1.5em" }} />}
       colorScheme="blue"
@@ -17,7 +16,6 @@ const CreateNote = () => {
     >
       New Note
     </Button>
-    </>
   );
 };
 

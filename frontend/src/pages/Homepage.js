@@ -7,7 +7,7 @@ const Homepage = () => {
   return (
     <Flex height="100vh" align="center" justify="center">
     <Container maxW="xl" centerContent>
-      <Box bg="white" w="100%" borderRadius="lg" borderWidth="1px">
+      <Box w="100%" borderRadius="lg" borderWidth="1px">
       <Tabs isFitted variant="enclosed">
         <TabList>
           <Tab>Login</Tab>

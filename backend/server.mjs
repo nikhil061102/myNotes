@@ -16,8 +16,10 @@ import noteRoutes from './routes/noteRoutes.mjs'
 app.use("/user", userRoutes);
 app.use("/notes", noteRoutes);
 
-// app.use(notFound);
-// app.use(errorHandler);
+app.get('/logout', (req, res) => {
+  res.clearCookie('jwt');
+  res.redirect('/');
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

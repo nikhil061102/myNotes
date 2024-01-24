@@ -4,33 +4,32 @@ import generateToken from "../config/generateToken.mjs";
 
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
-  
+    try{
     const userExists = await User.findOne({ email });
     if (userExists) {
-      throw new Error("User already exists.");
-      // switch to signin wali side
+      res.status(400).json({ err :"User already exists." });
     }
 
     const user = await User.create({ name, email, password });
     if (user) {
       const token = generateToken(user._id);
-      res.cookie("jwt", token, { httpOnly: true, maxAge : 3 * 60 * 60 * 1000});
+      res.cookie("jwt", token, { httpOnly: true, secure: true, sameSite: 'none', maxAge : 3 * 60 * 60 * 1000});
       res.status(201).json({
         name: user.name,
         email: user.email,
       });
-    } else {
-      throw new Error("Unable to signup at this moment.");
     }
+  }
+  catch(error){
+    res.status(400).json({ err :"Unable to signup at this moment." });
+  }
 });
 
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-
   const user = await User.findOne({ email });
   if (!user) {
-    throw new Error("User does not exist.");
-    // switch to signup wali side
+    res.status(400).json({ err :"User does not exist."});
   }
   else if (await user.matchPassword(password) == true) {
     const token = generateToken(user._id);
@@ -41,10 +40,10 @@ const authUser = asyncHandler(async (req, res) => {
     });
   } 
   else if (await user.matchPassword(password) == false) {
-    throw new Error("Invalid Credentials");
+    res.status(400).json({ err :"Invalid Credentials"});
   }
   else{
-    throw new Error("Unable to login at this moment.");
+    res.status(400).json({ err :"Unable to login at this moment."});
   }
 });
 

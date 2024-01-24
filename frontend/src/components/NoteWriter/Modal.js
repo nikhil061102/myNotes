@@ -11,6 +11,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Select,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { IconButton } from "@chakra-ui/react";
@@ -20,6 +21,8 @@ import ReactQuill from "react-quill";
 import 'quill/dist/quill.snow.css';
 
 function NoteWindow() {
+  const toast = useToast();
+
   const { isModalOpen, closeModal, initialValues } = useModal();
   const [title, setTitle] = useState("");
   const [urgency, setUrgency] = useState("Low");
@@ -27,6 +30,7 @@ function NoteWindow() {
   const [content, setContent] = useState("");
   const [pinActive, setPinActive] = useState(false);
   const [selectedColor, setSelectedColor] = useState("#ffffff");
+  const [id, setId] = useState(null);
 
   useEffect(() => {
     if (initialValues) {
@@ -36,22 +40,92 @@ function NoteWindow() {
       setContent(initialValues.content || "");
       setPinActive(initialValues.isPinned || false);
       setSelectedColor(initialValues.backgroundColor || "#ffffff");
+      setId(initialValues._id || null);
     }
   }, [initialValues]);
 
-  const saveInfo = () => {
+  const saveInfo = async () => {
     const info = {
       title,
       urgency,
       category,
       content,
       isPinned: pinActive,
-      backgroundColor: selectedColor
+      backgroundColor: selectedColor,
     };
-    console.log(info);
+  
+    try {
+      if (!id) {
+        const response = await fetch("/notes/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(info),
+        });
+    
+        if (!response.ok) {
+          toast({
+            title: "Error !",
+            description: "Failed to save the note",
+            status: "error",
+            position: "top",
+            duration: 1000,
+            isClosable: true,
+          });
+        } else if(response.status === 201){
+          toast({
+            title: "Success !",
+            description: "Note saved successfully",
+            status: "success",
+            position: "top",
+            duration: 1000,
+            isClosable: true,
+          });
+        } 
+      } else if ((title === "" && content === "<p><br></p>") || (title === "" && content === "")) {
+        await fetch(`/notes/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        const response = await fetch(`/notes/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(info),
+        });
+        if (!response.ok) {
+          toast({
+            title: "Error !",
+            description: "Failed to edit the note",
+            status: "error",
+            position: "top",
+            duration: 1000,
+            isClosable: true,
+          });
+        } else if(response.status === 200){
+          toast({
+            title: "Success !",
+            description: "Note edited successfully",
+            status: "success",
+            position: "top",
+            duration: 1000,
+            isClosable: true,
+          });
+        }
+      }
+      window.location.reload();
+    } catch (err) {
+      console.log(err);
+    } 
     closeModal();
   };
 
+  
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, 4, 5, 6, false] }],
