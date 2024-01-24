@@ -14,6 +14,7 @@ import {
   ModalFooter,
   IconButton,
   useToast,
+  Container,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from 'react'
 import { BsFillTrash3Fill } from "react-icons/bs";
@@ -196,12 +197,11 @@ const MultipleCards = () => {
               <HStack>
                 <Text fontWeight="bold">Category :</Text>
                 <p>{selectedCard && selectedCard.category}</p>
-              </HStack>
-              <HStack>
                 <Text fontWeight="bold">Urgency :</Text>
                 <p>{selectedCard && selectedCard.urgency}</p>
               </HStack>
-                {selectedCard && <div dangerouslySetInnerHTML={{ __html: selectedCard.content }} />}
+                <Text fontWeight="bold">Content :</Text>
+                <Container>{selectedCard && <div dangerouslySetInnerHTML={{ __html: selectedCard.content }} />}</Container>
             </>
           )}
         </ModalBody>
