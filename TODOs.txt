@@ -1,1 +1,2 @@
-make it responsive
+1. make it responsive
+2. icon on title bar
