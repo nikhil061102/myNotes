@@ -1,3 +1,0 @@
-in frontend/src/components/notes/MultipleCards.js 
-const [loading, setLoading] = useState(false); is for showing loading while the node are loading 
-(use frontend/src/components/notes/Loader.js)

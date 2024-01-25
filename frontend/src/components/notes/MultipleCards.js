@@ -23,6 +23,7 @@ import { useModal } from '../../context/ModalContext.mjs'
 import { useSorting } from '../../context/SortingContext';
 import { useSearchContext } from "../../context/SearchContext.mjs";
 import { convert } from 'html-to-text';
+import Loader from "./Loader";
 
 const MultipleCards = () => {
   const toast = useToast();
@@ -32,7 +33,7 @@ const MultipleCards = () => {
   const [selectedCard, setSelectedCard] = useState(null);
   const { selectedOption } = useSorting();
   const { searchTerm } = useSearchContext();
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const sortCardsData = (data, sortingOption) => {
     const urgencyOrder = { High: 1, Medium: 2, Low: 3 };
   
@@ -58,7 +59,7 @@ const MultipleCards = () => {
   
   useEffect(() => {
     const loadInit = async () => {
-      // setLoading(true);
+      setLoading(true);
       try {
         const res = await fetch("/notes/", {
           method: "GET",
@@ -89,7 +90,7 @@ const MultipleCards = () => {
       } catch (err) {
         console.log(err);
       }
-      // setLoading(false);
+      setLoading(false);
     };
 
     loadInit();
@@ -162,6 +163,7 @@ const MultipleCards = () => {
   
   return (
     <>
+      {loading && <Loader/>}
       {pinnedCards.length > 0 && (
         <>
           {pinnedCards.length > 0 && <Heading fontSize="xl" mb={4}>Pinned</Heading>}

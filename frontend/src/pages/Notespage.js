@@ -10,7 +10,6 @@ import { ModalProvider } from "../context/ModalContext.mjs";
 import { SortingProvider } from "../context/SortingContext.mjs";
 import { SearchProvider } from "../context/SearchContext.mjs";
 import LogoutButton from "../components/header/Logout";
-// import Loader from "../components/notes/Loader";
 
 const Notespage = () => {
   const { isOpen, onClose } = useDisclosure();
@@ -36,7 +35,6 @@ const Notespage = () => {
               <LogoutButton />
             </HStack>
             <NoteWindow isOpen={isOpen} onClose={onClose} />
-            {/* <Loader/> */}
             <MultipleCards />
           </ModalProvider>
         </SortingProvider>
