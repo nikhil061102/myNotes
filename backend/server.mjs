@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser';
 
 const app = express();
-const port = 5000;
+const PORT = 5000;
 
 connectDB();
 dotenv.config();
@@ -21,6 +21,6 @@ app.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+app.listen(PORT, () => {
+  console.log(`Server listening on PORT ${PORT}`)
 });
