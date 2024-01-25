@@ -75,7 +75,6 @@ const MultipleCards = () => {
             duration: 3000,
             isClosable: true,
           });
-          return;
         } else {
           const filteredCards = data.notes.filter(card =>
             card.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -93,7 +92,7 @@ const MultipleCards = () => {
       setLoading(false);
     };
 
-    loadInit();
+    return loadInit;
   }, [selectedOption, searchTerm, toast]);
 
   const handleCardClick = (card) => {
