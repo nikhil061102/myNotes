@@ -17,8 +17,8 @@ app.use("/user", userRoutes);
 app.use("/notes", noteRoutes);
 
 app.get('/logout', (req, res) => {
-  res.clearCookie('jwt');
   res.redirect('/');
+  res.clearCookie('jwt');
 });
 
 app.listen(PORT, () => {

@@ -1,2 +1,4 @@
 1. make it responsive
 2. icon on title bar
+3. bigger api body for create/edit notes
+4. search bar

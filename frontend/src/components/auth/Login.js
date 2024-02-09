@@ -54,7 +54,7 @@ const Login = () => {
       }
       if (data.email) {
         toast({
-          title: "Signed Up !",
+          title: "Logged In !",
           description: `Welcome back, ${data.name}`,
           status: "success",
           position: "top",
